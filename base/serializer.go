@@ -17,14 +17,14 @@ func (s *Serializer) WriteBytes(val []byte) *Serializer {
 
 func (s *Serializer) WriteInt64(val int64) *Serializer {
 	var buf = make([]byte, 8)
-	binary.BigEndian.PutUint64(buf, uint64(val))
+	binary.LittleEndian.PutUint64(buf, uint64(val))
 	s.WriteBytes(buf)
 	return s
 }
 
 func (s *Serializer) WriteInt32(val int32) *Serializer {
 	var buf = make([]byte, 4)
-	binary.BigEndian.PutUint32(buf, uint32(val))
+	binary.LittleEndian.PutUint32(buf, uint32(val))
 	s.WriteBytes(buf)
 	return s
 }
@@ -32,6 +32,11 @@ func (s *Serializer) WriteInt32(val int32) *Serializer {
 func (s *Serializer) WriteString(val string) *Serializer {
 	s.WriteInt64(int64(len(val)))
 	s.WriteBytes([]byte(val))
+	return s
+}
+
+func (s *Serializer) WriteSerializable(serializable Serializable) *Serializer {
+	s.WriteBytes(serializable.Bytes())
 	return s
 }
 
@@ -70,7 +75,7 @@ func (d *DeSerializer) ReadInt64(data *int64) (*DeSerializer, error) {
 	if err != nil {
 		return nil, err
 	}
-	val := int64(binary.BigEndian.Uint64(buf))
+	val := int64(binary.LittleEndian.Uint64(buf))
 	*data = val
 	return d, nil
 }
@@ -81,7 +86,7 @@ func (d *DeSerializer) ReadInt32(data *int32) (*DeSerializer, error) {
 	if err != nil {
 		return nil, err
 	}
-	val := int32(binary.BigEndian.Uint32(buf))
+	val := int32(binary.LittleEndian.Uint32(buf))
 	*data = val
 	return d, nil
 }
@@ -100,4 +105,25 @@ func (d *DeSerializer) ReadString(data *string) (*DeSerializer, error) {
 	s := string(buf[:])
 	*data = s
 	return d, nil
+}
+
+func (d *DeSerializer) ReadSerializable(serializable Serializable) (*DeSerializer, error) {
+	serializedByteSize := serializable.SerializedByteSize()
+	var bytes = make([]byte, serializedByteSize)
+	_, err := d.ReadBytes(bytes, uint64(serializedByteSize))
+	if err != nil {
+		return nil, err
+	}
+	err = serializable.SetBytes(bytes)
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
+}
+
+// Serializable objects
+type Serializable interface {
+	SerializedByteSize() int64
+	Bytes() []byte
+	SetBytes([]byte) (err error)
 }
