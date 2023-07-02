@@ -1,6 +1,6 @@
 package main
 
-import "cpk/cmd"
+import "cpk-algs/cmd"
 
 func main() {
 	cmd.Execute()

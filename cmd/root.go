@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cpk/logger"
+	"cpk-algs/logger"
 	"fmt"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/spf13/cobra"

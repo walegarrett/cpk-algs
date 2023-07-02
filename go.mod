@@ -1,4 +1,4 @@
-module cpk
+module cpk-algs
 
 go 1.18
 

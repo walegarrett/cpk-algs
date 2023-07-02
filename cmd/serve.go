@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"cpk/base/edwards25519"
-	"cpk/logger"
-	"cpk/mq"
+	"cpk-algs/base/edwards25519"
+	"cpk-algs/logger"
+	"cpk-algs/mq"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"

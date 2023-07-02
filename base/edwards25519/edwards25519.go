@@ -5,7 +5,7 @@
 package edwards25519
 
 import (
-	"cpk/base/edwards25519/field"
+	"cpk-algs/base/edwards25519/field"
 	"errors"
 )
 
