@@ -1,4 +1,4 @@
-package cpk
+package base
 
 import (
 	"cpk-algs/base/edwards25519"

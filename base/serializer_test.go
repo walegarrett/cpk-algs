@@ -2,7 +2,6 @@ package base
 
 import (
 	"cpk-algs/base/edwards25519"
-	"cpk-algs/cpk"
 	"crypto/rand"
 	"testing"
 )
@@ -86,12 +85,12 @@ func TestSerializer_WriteSerializable(t *testing.T) {
 		panic(err)
 	}
 	randomScalar := (&edwards25519.Scalar{}).SetUniformBytes(randomBytes[:])
-	var randomPriv cpk.Ed25519Scala
+	var randomPriv Ed25519Scala
 	randomPriv.Scalar = randomScalar
 	serializer.WriteSerializable(&randomPriv)
 
 	randomPoint := (&edwards25519.Point{}).ScalarBaseMult(randomScalar)
-	var randomPub cpk.Ed25519Point
+	var randomPub Ed25519Point
 	randomPub.Point = randomPoint
 	serializer.WriteSerializable(&randomPub)
 
@@ -101,7 +100,7 @@ func TestSerializer_WriteSerializable(t *testing.T) {
 		return
 	}
 
-	var randomPriv2 cpk.Ed25519Scala
+	var randomPriv2 Ed25519Scala
 	_, err = deserializer.ReadSerializable(&randomPriv2)
 	if err != nil {
 		return
@@ -111,7 +110,7 @@ func TestSerializer_WriteSerializable(t *testing.T) {
 		return
 	}
 
-	var randomPub2 cpk.Ed25519Point
+	var randomPub2 Ed25519Point
 	_, err = deserializer.ReadSerializable(&randomPub2)
 	if err != nil {
 		return
