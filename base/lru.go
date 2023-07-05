@@ -1,5 +1,9 @@
 package base
 
+import (
+	"cpk-algs/logger"
+)
+
 type Element struct {
 	pre   *Element
 	next  *Element
@@ -26,15 +30,18 @@ type LRU struct {
 	queries func(key string) interface{}
 }
 
-func NewLRU(cnt int64, queries func(string) interface{}) {
+func NewLRU(cnt int64, queries func(string) interface{}) *LRU {
 	var lru LRU
 	lru.capacity = cnt
 	lru.cache = make(map[string]*Element, cnt)
 	lru.head = new(Element)
 	lru.tail = new(Element)
 	lru.head.pre = lru.tail
+	lru.head.next = lru.tail
+	lru.tail.pre = lru.head
 	lru.tail.next = lru.head
 	lru.queries = queries
+	return &lru
 }
 
 func (lru *LRU) removeNode(ele *Element) {
@@ -65,10 +72,12 @@ func (lru *LRU) removeOldest() {
 	delete(lru.cache, head.key)
 }
 
-func (lru *LRU) query(key string) interface{} {
+func (lru *LRU) Query(key string) interface{} {
 	node, ok := lru.cache[key]
 	if !ok {
 		// key not exist
+		logger.Logger.Info("miss the cache, key", key)
+		//fmt.Printf("miss the cache, key: %+v\n", key)
 		if int64(len(lru.cache)) >= lru.capacity {
 			lru.removeOldest()
 		}
@@ -79,6 +88,8 @@ func (lru *LRU) query(key string) interface{} {
 		return value
 	} else {
 		// key exist
+		logger.Logger.Info("hit the cache, key", node.key, "value", node.value)
+		//fmt.Printf("hit the cache, key:%+v, value:%+v\n", node.key, node.value)
 		lru.removeToTail(node)
 		return node.value
 	}
