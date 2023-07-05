@@ -8,6 +8,12 @@ type Ed25519Scala struct {
 	*edwards25519.Scalar
 }
 
+func NewEd25519Scala() *Ed25519Scala {
+	var scala Ed25519Scala
+	scala.Scalar = &edwards25519.Scalar{}
+	return &scala
+}
+
 func (scala *Ed25519Scala) SerializedByteSize() int64 {
 	return 32
 }
@@ -27,6 +33,12 @@ func (scala *Ed25519Scala) SetBytes(bytes []byte) (err error) {
 
 type Ed25519Point struct {
 	*edwards25519.Point
+}
+
+func NewEd25519Point() *Ed25519Point {
+	var point Ed25519Point
+	point.Point = &(edwards25519.Point{})
+	return &point
 }
 
 func (point *Ed25519Point) SerializedByteSize() int64 {
