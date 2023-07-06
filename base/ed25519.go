@@ -2,6 +2,7 @@ package base
 
 import (
 	"cpk-algs/base/edwards25519"
+	"hash"
 )
 
 type Ed25519Scala struct {
@@ -29,6 +30,13 @@ func (scala *Ed25519Scala) SetBytes(bytes []byte) (err error) {
 	}
 	scala.Scalar = sc
 	return nil
+}
+
+func FromHashToScala(hash hash.Hash) *Ed25519Scala {
+	bytes := hash.Sum(nil)
+	scala := Ed25519Scala{}
+	scala.SetUniformBytes(bytes)
+	return &scala
 }
 
 type Ed25519Point struct {
