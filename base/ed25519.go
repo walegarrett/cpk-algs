@@ -34,9 +34,9 @@ func (scala *Ed25519Scala) SetBytes(bytes []byte) (err error) {
 
 func FromHashToScala(hash hash.Hash) *Ed25519Scala {
 	bytes := hash.Sum(nil)
-	scala := Ed25519Scala{}
-	scala.SetUniformBytes(bytes)
-	return &scala
+	scala := NewEd25519Scala()
+	scala.Scalar.SetUniformBytes(bytes)
+	return scala
 }
 
 type Ed25519Point struct {
@@ -44,9 +44,9 @@ type Ed25519Point struct {
 }
 
 func NewEd25519Point() *Ed25519Point {
-	var point Ed25519Point
-	point.Point = &(edwards25519.Point{})
-	return &point
+	var ed25519Point Ed25519Point
+	ed25519Point.Point = edwards25519.NewIdentityPoint()
+	return &ed25519Point
 }
 
 func (point *Ed25519Point) SerializedByteSize() int64 {

@@ -151,6 +151,30 @@ func NewClient(publicMatrix []base.Ed25519Point) *Client {
 	return &client
 }
 
+func (client *Client) Serialize(serializer *base.Serializer) {
+	serializer.WriteInt64(int64(len(client.publicMatrix)))
+	for _, ed25519Point := range client.publicMatrix {
+		serializer.WriteSerializable(&ed25519Point)
+	}
+}
+
+func (client *Client) Deserialize(deserializer *base.DeSerializer) error {
+	var len int64
+	_, err := deserializer.ReadInt64(&len)
+	if err != nil {
+		return err
+	}
+	client.publicMatrix = make([]base.Ed25519Point, len)
+	for i := int64(0); i < len; i++ {
+		_, err = deserializer.ReadSerializable(&(client.publicMatrix[i]))
+		if err != nil {
+			return err
+		}
+	}
+	client.initQueries()
+	return nil
+}
+
 func (client *Client) QueryPK(ident string) *base.PublicKey {
 	res := client.pkQueriesFunc(ident)
 	publicKey, ok := res.(base.PublicKey)
@@ -172,10 +196,10 @@ func (client *Client) CombineSKPieces(skPieces []SKPiece, myPublicKey base.Publi
 	}
 	set := make(map[int]void)
 	// 组合出分片列表中的候选组合
-	for i, skPiece := range skPieces {
-		if _, exist := set[i]; !exist {
-			set[i] = void{}
-			candidates[int(skPiece.Index)&i].Scalar.Add(candidates[skPiece.Index].Scalar, skPiece.Secret.Scalar)
+	for index, skPiece := range skPieces {
+		if _, exist := set[index]; !exist {
+			set[index] = void{}
+			candidates[skPiece.Index&1].Scalar.Add(candidates[skPiece.Index&1].Scalar, skPiece.Secret.Scalar)
 		}
 	}
 	// 遍历每个候选的私钥组合，找到与公钥对应的私钥组合
@@ -247,7 +271,7 @@ type CA struct {
 }
 
 func (ca *CA) InitCA(genKey string) {
-	counter := 0
+	counter := int64(0)
 	for i := 0; i < matrixSize; i++ {
 		hash, err := blake2b.New512([]byte(genKey))
 		if err != nil {
@@ -293,13 +317,17 @@ func (ca *CA) QuerySK(ident string) base.PrivateKey {
 	return privateKey
 }
 
+func (ca *CA) ExportPublicMatrixForClient(client *Client) {
+	client.CreatePublicKeyMatrixFromPrivateKeyMatrix(ca.privateMatrix)
+}
+
 type DistributedCA struct {
 	privateMatrixPiece []base.Ed25519Scala
 	Index              int64
 }
 
 func (distributedCA *DistributedCA) InitDistributedCA(index int64, genKey string) {
-	counter := 0
+	counter := int64(0)
 	if index >= 2 {
 		counter += matrixPieceSize
 	}
@@ -356,6 +384,13 @@ func (distributedCA *DistributedCA) QuerySK(ident string) SKPiece {
 	return skPiece
 }
 
-func (distributedCA *DistributedCA) exportPublicMatrixForClient(client *Client) {
-	client.CreatePublicKeyMatrixFromPrivateKeyMatrix(distributedCA.privateMatrixPiece)
+func (distributedCA *DistributedCA) ExportPublicMatrixPiece() PMPiece {
+	pmPiece := PMPiece{}
+	for _, ed25519Scala := range distributedCA.privateMatrixPiece {
+		ed25519Point := base.Ed25519Point{}
+		ed25519Point.Point = (&edwards25519.Point{}).ScalarBaseMult(ed25519Scala.Scalar)
+		pmPiece.Piece = append(pmPiece.Piece, ed25519Point)
+	}
+	pmPiece.Index = distributedCA.Index
+	return pmPiece
 }
