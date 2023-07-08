@@ -4,6 +4,7 @@ import (
 	"cpk-algs/base"
 	"cpk-algs/base/edwards25519"
 	"crypto/rand"
+	"strconv"
 	"testing"
 )
 
@@ -69,5 +70,42 @@ func TestPMPiece_Serialize(t *testing.T) {
 	if point.Equal(pmPiece2.Piece[0].Point) != 1 {
 		t.Error("bad deserializer point:{}", pmPiece2.Piece[0].Point)
 		return
+	}
+}
+
+func TestClient_CombineSKPieces(t *testing.T) {
+	var distributedCAs [piecesCount]DistributedCA
+	genKeys := []string{"gen_key1", "gen_key2"}
+	var pmPieces []PMPiece
+	for i := 0; i < piecesCount; i++ {
+		// 0,1  2,3分别使用一个不同的key用于生成分片私钥矩阵
+		idx := 0
+		if i >= 2 {
+			idx = 1
+		}
+		distributedCAs[i].InitDistributedCA(int64(i), genKeys[idx])
+		pmPieces = append(pmPieces, distributedCAs[i].ExportPublicMatrixPiece())
+	}
+	client := Client{}
+	client.CombinePMPieces(pmPieces)
+
+	count := 8
+	for count > 0 {
+		var skPieces []SKPiece
+		ident := "ident" + strconv.Itoa(count)
+		publicKey := client.QueryPK(ident)
+		for j := 0; j < piecesCount; j++ {
+			skPieces = append(skPieces, distributedCAs[j].QuerySK(ident))
+		}
+		res, privateKey := client.CombineSKPieces(skPieces, *publicKey)
+		if !res {
+			t.Error("combine private key pieces failed")
+			return
+		}
+		if publicKey.Point.Equal((&edwards25519.Point{}).ScalarBaseMult(privateKey.Scalar)) != 1 {
+			t.Error("combined private key is not corresponding to public key")
+			return
+		}
+		count--
 	}
 }

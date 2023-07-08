@@ -49,3 +49,34 @@ func TestSerializer_WriteSerializable(t *testing.T) {
 		return
 	}
 }
+
+func TestEd25519Point_add(t *testing.T) {
+	ed25519Point := NewEd25519Point()
+	var randomBytes [64]byte
+	_, err := rand.Read(randomBytes[:])
+	if err != nil {
+		panic(err)
+	}
+	scalar1 := (&edwards25519.Scalar{}).SetUniformBytes(randomBytes[:])
+	var ed25519Scala1 Ed25519Scala
+	ed25519Scala1.Scalar = scalar1
+	ed25519Point.Point.Add(ed25519Point.Point, (&edwards25519.Point{}).ScalarBaseMult(ed25519Scala1.Scalar))
+
+	_, err = rand.Read(randomBytes[:])
+	if err != nil {
+		panic(err)
+	}
+	scalar2 := (&edwards25519.Scalar{}).SetUniformBytes(randomBytes[:])
+	var ed25519Scala2 Ed25519Scala
+	ed25519Scala2.Scalar = scalar2
+	ed25519Point.Point.Add(ed25519Point.Point, (&edwards25519.Point{}).ScalarBaseMult(ed25519Scala2.Scalar))
+
+	var ed25519Scala = NewEd25519Scala()
+	ed25519Scala.Scalar.Add(ed25519Scala.Scalar, ed25519Scala1.Scalar)
+	ed25519Scala.Scalar.Add(ed25519Scala.Scalar, ed25519Scala2.Scalar)
+
+	if (&edwards25519.Point{}).ScalarBaseMult(ed25519Scala.Scalar).Equal(ed25519Point.Point) != 1 {
+		t.Error("point add error")
+		return
+	}
+}
