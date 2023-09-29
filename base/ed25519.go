@@ -1,7 +1,7 @@
 package base
 
 import (
-	"cpk-algs/base/edwards25519"
+	"github.com/walegarrett/cpk-algs/base/edwards25519"
 	"hash"
 )
 

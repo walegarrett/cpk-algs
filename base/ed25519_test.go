@@ -1,8 +1,8 @@
 package base
 
 import (
-	"cpk-algs/base/edwards25519"
 	"crypto/rand"
+	"github.com/walegarrett/cpk-algs/base/edwards25519"
 	"testing"
 )
 

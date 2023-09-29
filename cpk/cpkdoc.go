@@ -2,9 +2,9 @@ package cpk
 
 import (
 	"bytes"
-	"cpk-algs/base"
-	"cpk-algs/base/edwards25519"
 	"encoding/binary"
+	"github.com/walegarrett/cpk-algs/base"
+	"github.com/walegarrett/cpk-algs/base/edwards25519"
 	"golang.org/x/crypto/blake2b"
 )
 

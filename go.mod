@@ -1,4 +1,4 @@
-module cpk-algs
+module github.com/walegarrett/cpk-algs
 
 go 1.18
 

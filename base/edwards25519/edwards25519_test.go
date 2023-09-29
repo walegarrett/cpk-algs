@@ -5,8 +5,8 @@
 package edwards25519
 
 import (
-	"cpk-algs/base/edwards25519/field"
 	"encoding/hex"
+	"github.com/walegarrett/cpk-algs/base/edwards25519/field"
 	"os"
 	"reflect"
 	"strings"

@@ -2,8 +2,8 @@ package base
 
 import (
 	"bytes"
-	"cpk-algs/base/edwards25519"
 	"encoding/hex"
+	"github.com/walegarrett/cpk-algs/base/edwards25519"
 	"testing"
 )
 

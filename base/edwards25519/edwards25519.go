@@ -5,8 +5,8 @@
 package edwards25519
 
 import (
-	"cpk-algs/base/edwards25519/field"
 	"errors"
+	"github.com/walegarrett/cpk-algs/base/edwards25519/field"
 )
 
 // Point types.

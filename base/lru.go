@@ -1,7 +1,7 @@
 package base
 
 import (
-	"cpk-algs/logger"
+	"github.com/walegarrett/cpk-algs/logger"
 )
 
 type Element struct {

@@ -2,9 +2,9 @@ package base
 
 import (
 	"bytes"
-	"cpk-algs/base/edwards25519"
 	"crypto/rand"
 	"errors"
+	"github.com/walegarrett/cpk-algs/base/edwards25519"
 	"golang.org/x/crypto/blake2b"
 )
 
