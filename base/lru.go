@@ -1,7 +1,7 @@
 package base
 
 import (
-	"cpk-authentication/logger"
+	"cpk-algs/logger"
 )
 
 type Element struct {

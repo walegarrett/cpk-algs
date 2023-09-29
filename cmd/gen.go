@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cpk-authentication/base"
+	"cpk-algs/base"
 	"encoding/hex"
 	"github.com/Songmu/prompter"
 	"github.com/spf13/cobra"

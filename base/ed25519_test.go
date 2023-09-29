@@ -1,7 +1,7 @@
 package base
 
 import (
-	"cpk-authentication/base/edwards25519"
+	"cpk-algs/base/edwards25519"
 	"crypto/rand"
 	"testing"
 )
