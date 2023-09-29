@@ -394,3 +394,31 @@ func (distributedCA *DistributedCA) ExportPublicMatrixPiece() PMPiece {
 	pmPiece.Index = distributedCA.Index
 	return pmPiece
 }
+
+func (distributedCA *DistributedCA) Serialize(serializer *base.Serializer) {
+	serializer.WriteInt64(int64(len(distributedCA.privateMatrixPiece)))
+	for _, ed25519Point := range distributedCA.privateMatrixPiece {
+		serializer.WriteSerializable(&ed25519Point)
+	}
+	serializer.WriteInt64(distributedCA.Index)
+}
+
+func (distributedCA *DistributedCA) Deserialize(deserializer *base.DeSerializer) error {
+	var len int64
+	_, err := deserializer.ReadInt64(&len)
+	if err != nil {
+		return err
+	}
+	distributedCA.privateMatrixPiece = make([]base.Ed25519Scala, len)
+	for i := int64(0); i < len; i++ {
+		_, err = deserializer.ReadSerializable(&(distributedCA.privateMatrixPiece[i]))
+		if err != nil {
+			return err
+		}
+	}
+	_, err = deserializer.ReadInt64(&(distributedCA.Index))
+	if err != nil {
+		return err
+	}
+	return nil
+}

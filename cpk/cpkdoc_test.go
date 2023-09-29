@@ -73,6 +73,40 @@ func TestPMPiece_Serialize(t *testing.T) {
 	}
 }
 
+func TestDistributedCA_Deserialize(t *testing.T) {
+	var distributedCAs [piecesCount]DistributedCA
+	genKeys := []string{"gen_key1", "gen_key2"}
+	for i := 0; i < piecesCount; i++ {
+		// 0,1  2,3分别使用一个不同的key用于生成分片私钥矩阵
+		idx := 0
+		if i >= 2 {
+			idx = 1
+		}
+		distributedCAs[i].InitDistributedCA(int64(i), genKeys[idx])
+
+		var serializer base.Serializer
+		distributedCAs[i].Serialize(&serializer)
+		deserializer, err := base.NewDeserializer(serializer)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		var distributedCA DistributedCA
+		err = distributedCA.Deserialize(deserializer)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		if i != (int)(distributedCA.Index) {
+			t.Error("bad serializer index:{}", distributedCA.Index)
+			return
+		}
+		if matrixPieceSize != len(distributedCA.privateMatrixPiece) {
+			t.Error("bad serialzer private matrix piece:{}", distributedCA.privateMatrixPiece)
+			return
+		}
+	}
+}
 func TestClient_CombineSKPieces(t *testing.T) {
 	var distributedCAs [piecesCount]DistributedCA
 	genKeys := []string{"gen_key1", "gen_key2"}
