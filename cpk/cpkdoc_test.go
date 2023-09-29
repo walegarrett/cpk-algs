@@ -1,8 +1,8 @@
 package cpk
 
 import (
-	"cpk-algs/base"
-	"cpk-algs/base/edwards25519"
+	"cpk-authentication/base"
+	"cpk-authentication/base/edwards25519"
 	"crypto/rand"
 	"strconv"
 	"testing"

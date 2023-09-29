@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"cpk-algs/base/edwards25519"
-	"cpk-algs/logger"
-	"cpk-algs/mq"
+	"cpk-authentication/base/edwards25519"
+	"cpk-authentication/logger"
+	"cpk-authentication/mq"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"

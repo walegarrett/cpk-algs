@@ -2,7 +2,7 @@ package base
 
 import (
 	"bytes"
-	"cpk-algs/base/edwards25519"
+	"cpk-authentication/base/edwards25519"
 	"encoding/hex"
 	"testing"
 )

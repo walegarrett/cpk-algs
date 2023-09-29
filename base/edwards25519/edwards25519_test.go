@@ -5,7 +5,7 @@
 package edwards25519
 
 import (
-	"cpk-algs/base/edwards25519/field"
+	"cpk-authentication/base/edwards25519/field"
 	"encoding/hex"
 	"os"
 	"reflect"

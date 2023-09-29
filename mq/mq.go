@@ -3,9 +3,9 @@ package mq
 import (
 	"bytes"
 	"context"
-	"cpk-algs/base"
-	"cpk-algs/base/edwards25519"
-	"cpk-algs/logger"
+	"cpk-authentication/base"
+	"cpk-authentication/base/edwards25519"
+	"cpk-authentication/logger"
 	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"

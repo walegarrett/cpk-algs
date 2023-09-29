@@ -1,6 +1,6 @@
 package main
 
-import "cpk-algs/cmd"
+import "cpk-authentication/cmd"
 
 func main() {
 	cmd.Execute()

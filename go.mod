@@ -1,4 +1,4 @@
-module cpk-algs
+module cpk-authentication
 
 go 1.18
 

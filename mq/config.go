@@ -1,6 +1,6 @@
 package mq
 
-import "cpk-algs/base"
+import "cpk-authentication/base"
 
 type Config struct {
 	NodePort     uint16

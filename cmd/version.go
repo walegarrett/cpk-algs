@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"cpk-algs/logger"
+	"cpk-authentication/logger"
 	"github.com/spf13/cobra"
 )
 

@@ -1,7 +1,7 @@
 package base
 
 import (
-	"cpk-algs/base/edwards25519"
+	"cpk-authentication/base/edwards25519"
 	"hash"
 )
 
