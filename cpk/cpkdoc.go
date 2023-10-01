@@ -258,9 +258,8 @@ func (client *Client) CombinePMPieces(pmPieces []PMPiece) {
 func (client *Client) CreatePublicKeyMatrixFromPrivateKeyMatrix(privateKeyMatrix []base.Ed25519Scala) {
 	client.publicMatrix = nil
 	for _, ed25519Scala := range privateKeyMatrix {
-		point := base.Ed25519Point{}.ScalarBaseMult(ed25519Scala.Scalar)
 		ed25519Point := base.Ed25519Point{}
-		ed25519Point.Point = point
+		ed25519Point.Point = (&edwards25519.Point{}).ScalarBaseMult(ed25519Scala.Scalar)
 		client.publicMatrix = append(client.publicMatrix, ed25519Point)
 	}
 	client.initQueries()

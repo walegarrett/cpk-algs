@@ -168,3 +168,36 @@ func TestClient_CombineSKPieces(t *testing.T) {
 		count--
 	}
 }
+
+func TestClient_CreatePublicKeyMatrixFromPrivateKeyMatrix(t *testing.T) {
+	var ca CA
+	ca.InitCA("genkey1")
+	client := Client{}
+	ca.ExportPublicMatrixForClient(&client)
+	sk := ca.QuerySK("id1")
+	pk := client.QueryPK("id1")
+	if pk.Point.Equal((&edwards25519.Point{}).ScalarBaseMult(sk.Scalar)) != 1 {
+		t.Error("sk not corresponding to pk")
+		return
+	}
+}
+
+func TestClient_QueryPK(t *testing.T) {
+	var ca CA
+	ca.InitCA("genkey1")
+	client := Client{}
+	ca.ExportPublicMatrixForClient(&client)
+	sk := ca.QuerySK("id1")
+	pk := client.QueryPK("id2")
+	if pk.Point.Equal((&edwards25519.Point{}).ScalarBaseMult(sk.Scalar)) != 0 {
+		t.Error("sk corresponding to pk")
+		return
+	}
+
+	sk = ca.QuerySK("id100")
+	pk = client.QueryPK("id100")
+	if pk.Point.Equal((&edwards25519.Point{}).ScalarBaseMult(sk.Scalar)) != 1 {
+		t.Error("sk not corresponding to pk")
+		return
+	}
+}
