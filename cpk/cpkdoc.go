@@ -54,13 +54,13 @@ func (pmPiece *PMPiece) DeSerialize(deserializer *base.DeSerializer) error {
 	if err != nil {
 		return err
 	}
-	var len int64
-	_, err = deserializer.ReadInt64(&len)
+	var l int64
+	_, err = deserializer.ReadInt64(&l)
 	if err != nil {
 		return err
 	}
-	pmPiece.Piece = make([]base.Ed25519Point, len)
-	for i := int64(0); i < len; i++ {
+	pmPiece.Piece = make([]base.Ed25519Point, l)
+	for i := int64(0); i < l; i++ {
 		_, err = deserializer.ReadSerializable(&(pmPiece.Piece[i]))
 		if err != nil {
 			return err
@@ -159,13 +159,13 @@ func (client *Client) Serialize(serializer *base.Serializer) {
 }
 
 func (client *Client) Deserialize(deserializer *base.DeSerializer) error {
-	var len int64
-	_, err := deserializer.ReadInt64(&len)
+	var l int64
+	_, err := deserializer.ReadInt64(&l)
 	if err != nil {
 		return err
 	}
-	client.publicMatrix = make([]base.Ed25519Point, len)
-	for i := int64(0); i < len; i++ {
+	client.publicMatrix = make([]base.Ed25519Point, l)
+	for i := int64(0); i < l; i++ {
 		_, err = deserializer.ReadSerializable(&(client.publicMatrix[i]))
 		if err != nil {
 			return err
@@ -321,6 +321,29 @@ func (ca *CA) ExportPublicMatrixForClient(client *Client) {
 	client.CreatePublicKeyMatrixFromPrivateKeyMatrix(ca.privateMatrix)
 }
 
+func (ca *CA) Serialize(serializer *base.Serializer) {
+	serializer.WriteInt64(int64(len(ca.privateMatrix)))
+	for _, ed25519Point := range ca.privateMatrix {
+		serializer.WriteSerializable(&ed25519Point)
+	}
+}
+
+func (ca *CA) Deserialize(deserializer *base.DeSerializer) error {
+	var l int64
+	_, err := deserializer.ReadInt64(&l)
+	if err != nil {
+		return err
+	}
+	ca.privateMatrix = make([]base.Ed25519Scala, l)
+	for i := int64(0); i < l; i++ {
+		_, err = deserializer.ReadSerializable(&(ca.privateMatrix[i]))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type DistributedCA struct {
 	privateMatrixPiece []base.Ed25519Scala
 	Index              int64
@@ -404,13 +427,13 @@ func (distributedCA *DistributedCA) Serialize(serializer *base.Serializer) {
 }
 
 func (distributedCA *DistributedCA) Deserialize(deserializer *base.DeSerializer) error {
-	var len int64
-	_, err := deserializer.ReadInt64(&len)
+	var l int64
+	_, err := deserializer.ReadInt64(&l)
 	if err != nil {
 		return err
 	}
-	distributedCA.privateMatrixPiece = make([]base.Ed25519Scala, len)
-	for i := int64(0); i < len; i++ {
+	distributedCA.privateMatrixPiece = make([]base.Ed25519Scala, l)
+	for i := int64(0); i < l; i++ {
 		_, err = deserializer.ReadSerializable(&(distributedCA.privateMatrixPiece[i]))
 		if err != nil {
 			return err
