@@ -151,6 +151,10 @@ func NewClient(publicMatrix []base.Ed25519Point) *Client {
 	return &client
 }
 
+func (client *Client) QueryPublicKeyMatrix() []base.Ed25519Point {
+	return client.publicMatrix
+}
+
 func (client *Client) Serialize(serializer *base.Serializer) {
 	serializer.WriteInt64(int64(len(client.publicMatrix)))
 	for _, ed25519Point := range client.publicMatrix {
