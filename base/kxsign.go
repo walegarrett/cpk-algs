@@ -12,11 +12,45 @@ type PublicKey struct {
 	*edwards25519.Point
 }
 
+func (pk *PublicKey) SerializedByteSize() int64 {
+	return 32
+}
+
+func (pk *PublicKey) Bytes() []byte {
+	return pk.Point.Bytes()
+}
+
+func (pk *PublicKey) SetBytes(bytes []byte) (err error) {
+	pt, err := (&edwards25519.Point{}).SetBytes(bytes)
+	if err != nil {
+		return
+	}
+	pk.Point = pt
+	return nil
+}
+
 type PrivateKey struct {
 	*edwards25519.Scalar
 	initialized bool
 	signKey     [32]byte
 	pk          PublicKey
+}
+
+func (sk *PrivateKey) SerializedByteSize() int64 {
+	return 32
+}
+
+func (sk *PrivateKey) Bytes() []byte {
+	return sk.Scalar.Bytes()
+}
+
+func (sk *PrivateKey) SetBytes(bytes []byte) (err error) {
+	sc, err := (&edwards25519.Scalar{}).SetCanonicalBytes(bytes)
+	if err != nil {
+		return
+	}
+	sk.Scalar = sc
+	return nil
 }
 
 func (p *PrivateKey) initialize() {

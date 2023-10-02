@@ -40,6 +40,15 @@ func (s *Serializer) WriteSerializable(serializable Serializable) *Serializer {
 	return s
 }
 
+func (s *Serializer) WriteBool(val bool) *Serializer {
+	if val {
+		s.WriteBytes([]byte{1})
+	} else {
+		s.WriteBytes([]byte{0})
+	}
+	return s
+}
+
 type DeSerializer struct {
 	buf   []byte
 	cur   uint64
@@ -117,6 +126,20 @@ func (d *DeSerializer) ReadSerializable(serializable Serializable) (*DeSerialize
 	err = serializable.SetBytes(bytes)
 	if err != nil {
 		return nil, err
+	}
+	return d, nil
+}
+
+func (d *DeSerializer) ReadBool(val *bool) (*DeSerializer, error) {
+	buf := make([]byte, 1)
+	_, err := d.ReadBytes(buf, 1)
+	if err != nil {
+		return nil, err
+	}
+	if buf[0] == 1 {
+		*val = true
+	} else {
+		*val = false
 	}
 	return d, nil
 }
