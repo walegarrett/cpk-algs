@@ -54,6 +54,13 @@ func (h *Hasher) Hash(value interface{}) *Hasher {
 		if err != nil {
 			return nil
 		}
+	case uint:
+		bytes := make([]byte, 4)
+		binary.LittleEndian.PutUint32(bytes, uint32(value.(uint)))
+		_, err := h.hasher.Write(bytes)
+		if err != nil {
+			return nil
+		}
 	case int32:
 		bytes := make([]byte, 4)
 		binary.LittleEndian.PutUint32(bytes, uint32(value.(int32)))
