@@ -22,4 +22,10 @@ func Test_hash(t *testing.T) {
 		t.Error()
 		return
 	}
+	hasher.Reset()
+	bytes3 := hasher.Hash(32).Hash("").Hash(true).Sum()
+	if !bytes.Equal(bytes1, bytes3) {
+		t.Error()
+		return
+	}
 }
