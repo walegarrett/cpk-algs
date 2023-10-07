@@ -29,6 +29,12 @@ func (s *Serializer) WriteInt32(val int32) *Serializer {
 	return s
 }
 
+func (s *Serializer) WriteBytesWithLength(val []byte) *Serializer {
+	s.WriteInt64(int64(len(val)))
+	s.WriteBytes(val)
+	return s
+}
+
 func (s *Serializer) WriteString(val string) *Serializer {
 	s.WriteInt64(int64(len(val)))
 	s.WriteBytes([]byte(val))
@@ -97,6 +103,32 @@ func (d *DeSerializer) ReadInt32(data *int32) (*DeSerializer, error) {
 	}
 	val := int32(binary.LittleEndian.Uint32(buf))
 	*data = val
+	return d, nil
+}
+
+func (d *DeSerializer) ReadBytesWithLength(data *[]byte) (*DeSerializer, error) {
+	var lens int64
+	_, err := d.ReadInt64(&lens)
+	if err != nil {
+		return nil, err
+	}
+
+	// 检查 data 是否为 nil，如果为 nil，则分配新的切片
+	if *data == nil {
+		*data = make([]byte, lens)
+	} else if int64(lens) > int64(len(*data)) {
+		// 如果传递的切片长度不足，扩展它
+		*data = append(*data, make([]byte, lens-int64(len(*data)))...)
+	} else {
+		// 如果传递的切片足够大，截断它
+		*data = (*data)[:lens]
+	}
+
+	_, err = d.ReadBytes(*data, uint64(lens))
+	if err != nil {
+		return nil, err
+	}
+
 	return d, nil
 }
 

@@ -1,6 +1,7 @@
 package base
 
 import (
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -73,4 +74,27 @@ func TestSerializer_WriteInt32(t *testing.T) {
 		t.Error("bad deserializer str:{}", str)
 		return
 	}
+}
+
+func TestDeSerializer_ReadBytesWithoutLength(t *testing.T) {
+	var serializer Serializer
+	var str = "123456"
+	serializer.WriteBytesWithLength([]byte(str))
+	serializer.WriteString(str)
+	deserializer, err := NewDeserializer(serializer)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	var bs []byte
+	_, err = deserializer.ReadBytesWithLength(&bs)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	require.EqualValues(t, []byte(str), bs)
+	var str2 string
+	_, err = deserializer.ReadString(&str2)
+	require.NoError(t, err)
+	require.Equal(t, str, str2)
 }
